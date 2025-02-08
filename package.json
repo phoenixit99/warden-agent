@@ -1,0 +1,25 @@
+{
+  "name": "warden-agent",
+  "version": "1.0.0",
+  "description": "Warden Protocol AI Agent",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@wardenprotocol/warden-agent-kit-core": "latest",
+    "@wardenprotocol/warden-langchain": "latest",
+    "@langchain/openai": "latest",
+    "@langchain/langgraph": "latest",
+    "@langchain/ollama": "latest",
+    "@langchain/core": "latest",
+    "@langchain/schema": "latest",
+    "dotenv": "^16.0.3",
+    "typescript": "^4.9.5"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.1",
+    "@types/node": "^18.0.0"
+  }
+}
