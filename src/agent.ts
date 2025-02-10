@@ -4,6 +4,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { MemorySaver } from "@langchain/langgraph";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { ChatOllama } from "@langchain/ollama";
+import { HumanMessage } from "@langchain/core/messages";
 import dotenv from 'dotenv';
 
 // Load environment variables first
@@ -15,17 +16,33 @@ const config = {
 };
 
 // Initialize Warden Agent Kit
-const agentkit = new WardenAgentKit(config);
+export const agentkit = new WardenAgentKit(config);
 // Initialize Warden Agent Kit Toolkit and get tools
 const wardenToolkit = new WardenToolkit(agentkit as any);
 const tools = wardenToolkit.getTools();
 
-// Uncomment and update the Ollama configuration
+// Configure LLM
+// const llm = new ChatOllama({
+//   model: "llama3.2",
+//   temperature: 0,
+//   maxRetries: 3,
+//   baseUrl: "http://localhost:11434", // Local Ollama instance
+// });
+
+// const llm = new ChatOpenAI({
+//     modelName: "llama-3.1-8b-instruct-fp8-l4",
+//     temperature: 0,
+//     maxRetries: 2,
+//     apiKey: "thisIsIgnored",
+//     configuration: {
+//         baseURL: "https://ai.devnet.wardenprotocol.org/openai/v1",
+//     },
+// });
+
 const llm = new ChatOllama({
-  model: "llama3.2",
-  temperature: 0,
-  maxRetries: 3,
-  baseUrl: "http://localhost:11434", // Local Ollama instance
+    model: "llama3.2",
+    temperature: 0,
+    maxRetries: 2
 });
 
 // const llm = new ChatOpenAI(
@@ -38,11 +55,16 @@ const llm = new ChatOllama({
 //   }
 // );
 
+// const llm = new ChatOpenAI({
+//     model: "o1-mini",
+// });
 
 // Store buffered conversation history in memory
 const memory = new MemorySaver();
 const agentConfig = {
-  configurable: { thread_id: "Warden Agent Kit CLI Agent Example!" },
+  configurable: { 
+    thread_id: "Warden Agent Kit CLI Agent !"
+  },
 };
 
 // Create React Agent using the LLM and Warden Agent Kit tools
@@ -50,10 +72,7 @@ const agent = createReactAgent({
   llm,
   tools,
   checkpointSaver: memory,
-  messageModifier:
-    "You're a helpful assistant that can help with a variety of tasks related to web3 transactions. " +
-    "You should only use the provided tools to carry out tasks, interpret the users input " +
-    "and select the correct tool to use for the required tasks or tasks.",
+  messageModifier: agentConfig.configurable.thread_id
 });
 
 export { agent, agentConfig };

@@ -5,7 +5,11 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "ts-node src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "check-spaces": "ts-node src/scripts/check-spaces.ts",
+    "create-space": "ts-node src/scripts/create-space.ts",
+    "setup-treasury": "ts-node src/scripts/setup-treasury.ts",
+    "clean": "rm -rf dist/ node_modules/.cache .tsbuildinfo"
   },
   "dependencies": {
     "@wardenprotocol/warden-agent-kit-core": "latest",

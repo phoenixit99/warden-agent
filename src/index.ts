@@ -1,12 +1,14 @@
-import { agent, agentConfig } from './agent';
+import { agent, agentConfig, agentkit } from './agent';
+import { checkSpaces } from './scripts/check-spaces';
 import dotenv from 'dotenv';
 import readline from 'readline';
 import { HumanMessage } from "@langchain/core/messages";
+import { createSpace } from './scripts/create-space';
 
 // Load environment variables
 dotenv.config();
 
-async function runChatMode(agent: any, config: any) {
+async function runChatMode(agent: any, agentConfig: any) {
     console.log("Starting chat mode... Type 'exit' to end.");
 
     const rl = readline.createInterface({
@@ -25,9 +27,27 @@ async function runChatMode(agent: any, config: any) {
                 break;
             }
 
+            // Handle space-related queries
+            if (userInput.toLowerCase().includes("get spaces") ||
+                userInput.toLowerCase().includes("show spaces") ||
+                userInput.toLowerCase().includes("list spaces")) {
+                // Check spaces directly using agentkit
+                console.log("Checking available spaces...");
+                const spaces = await checkSpaces(agentkit);
+                console.log(spaces);
+                continue;
+            }
+            if (userInput.toLowerCase().includes("create spaces")) {
+                // Check spaces directly using agentkit
+                console.log("Create spaces...");
+                const spaces = await createSpace(agentkit);
+                console.log(spaces);
+                continue;
+            }            
+            // Handle other queries
             const stream = await agent.stream(
                 { messages: [new HumanMessage(userInput)] },
-                config
+                agentConfig
             );
 
             for await (const chunk of stream) {
@@ -48,6 +68,7 @@ async function runChatMode(agent: any, config: any) {
 
 async function main() {
     try {
+        // Continue with chat mode
         await runChatMode(agent, agentConfig);
     } catch (error) {
         console.error('Error:', error);
